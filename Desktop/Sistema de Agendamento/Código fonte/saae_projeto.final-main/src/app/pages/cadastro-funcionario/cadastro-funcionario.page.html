@@ -1,0 +1,113 @@
+<ion-content fullscreen class="login-bg">
+  <div class="login-wrapper" [class.show]="!loading">
+    <h2>Cadastrar Funcionário</h2>
+    <p>Preencha os dados para criar uma conta</p>
+
+    <form (ngSubmit)="cadastrarFuncionario()">
+      <!-- Nome -->
+      <ion-item lines="none" class="input-item">
+        <ion-icon name="person-outline" slot="start"></ion-icon>
+        <ion-input
+          type="text"
+          placeholder="Nome"
+          [(ngModel)]="funcionario.nome"
+          name="nome"
+          required
+          clearInput>
+        </ion-input>
+      </ion-item>
+
+      <!-- E-mail -->
+      <ion-item lines="none" class="input-item">
+        <ion-icon name="mail-outline" slot="start"></ion-icon>
+        <ion-input
+          type="email"
+          placeholder="E-mail"
+          [(ngModel)]="funcionario.email"
+          name="email"
+          required
+          clearInput>
+        </ion-input>
+      </ion-item>
+
+      <!-- Telefone -->
+      <ion-item lines="none" class="input-item">
+        <ion-icon name="call-outline" slot="start"></ion-icon>
+        <ion-input
+          type="tel"
+          placeholder="Telefone"
+          [(ngModel)]="funcionario.telefone"
+          name="telefone"
+          required
+          clearInput>
+        </ion-input>
+      </ion-item>
+
+      <!-- Tipo de Funcionário -->
+      <ion-item lines="none" class="input-item">
+        <ion-icon name="briefcase-outline" slot="start"></ion-icon>
+        <ion-select
+          placeholder="Selecione o Tipo"
+          [(ngModel)]="funcionario.tipo"
+          name="tipo"
+          required>
+          <ion-select-option value="Professor">Professor</ion-select-option>
+          <ion-select-option value="Coordenador">Coordenação</ion-select-option>
+          <ion-select-option value="Diretor">Direção</ion-select-option>
+          <ion-select-option value="Chefe de TI">Chefe de TI</ion-select-option>
+          <ion-select-option value="Funcionário Administrativo">Administrativo</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <!-- Senha -->
+      <ion-item lines="none" class="input-item">
+        <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+        <ion-input
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="Senha"
+          [(ngModel)]="funcionario.senha"
+          name="senha"
+          required
+          clearInput
+          (ionInput)="onSenhaInput()">
+        </ion-input>
+        <ion-icon
+          slot="end"
+          [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+          class="eye-icon"
+          (click)="togglePasswordVisibility()">
+        </ion-icon>
+      </ion-item>
+
+      <!-- Confirmar Senha -->
+      <ion-item lines="none" class="input-item">
+        <ion-icon name="shield-checkmark-outline" slot="start"></ion-icon>
+        <ion-input
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="Confirmar Senha"
+          [(ngModel)]="funcionario.confirmarSenha"
+          name="confirmarSenha"
+          required
+          clearInput>
+        </ion-input>
+      </ion-item>
+
+      <!-- Botão Cadastrar -->
+      <ion-button
+        type="submit"
+        expand="block"
+        class="btn-login"
+        [disabled]="loading || !isSenhaValida()">
+        <ng-container *ngIf="!loading; else carregando">
+          <span class="btn-text">
+            Cadastrar
+            <ion-icon name="person-add-outline"></ion-icon>
+          </span>
+        </ng-container>
+        <ng-template #carregando>
+          <ion-spinner name="crescent"></ion-spinner>
+        </ng-template>
+      </ion-button>
+    </form>
+  </div>
+</ion-content>

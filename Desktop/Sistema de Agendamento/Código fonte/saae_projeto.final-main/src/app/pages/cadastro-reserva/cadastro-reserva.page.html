@@ -1,0 +1,28 @@
+<ion-header translucent>
+  <ion-toolbar color="primary">
+    <ion-title>Agendar Ambiente</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="checkNotifications()">
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" color="light">
+  <div class="intro-section">
+    <h1>Selecione um Ambiente</h1>
+    <p>Escolha o local que deseja agendar</p>
+  </div>
+
+  <ion-grid class="room-grid">
+    <ion-row>
+      <ion-col size="6" *ngFor="let ambiente of ambientes">
+        <ion-card class="room-card" (click)="selecionarAmbiente(ambiente)">
+          <ion-icon [name]="ambiente.icone" class="room-icon"></ion-icon>
+          <ion-card-title>{{ ambiente.nome }}</ion-card-title>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

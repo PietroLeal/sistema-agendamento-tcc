@@ -1,0 +1,248 @@
+<ion-header translucent>
+  <ion-toolbar color="primary">
+    <ion-title>Sistema de Agendamento Escolar</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="checkNotifications()">
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="openUserProfile()">
+        <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content class="ion-padding" color="light">
+  <div class="welcome-section">
+    <h1>Olá, {{ tipoUsuario }}!</h1>
+    <p>Bem-vindo ao Sistema de Agendamento Escolar</p>
+  </div>
+
+
+  <!-- Reservas recentes -->
+  <ion-card *ngFor="let reserva of recentBookings; let i = index" class="recent-booking-card ion-margin-bottom">
+    <ion-card-header>
+      <ion-card-title>{{ reserva.title }}</ion-card-title>
+      <ion-card-subtitle>{{ reserva.date }} | {{ reserva.time }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      Sala: {{ reserva.room }} <br>
+      Status: <ion-badge [color]="reserva.statusColor">{{ reserva.status }}</ion-badge>
+    </ion-card-content>
+    <ion-card-content>
+      <ion-button color="danger" fill="clear" (click)="removerReserva(i)">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- PROFESSOR -->
+  <ng-container *ngIf="tipoUsuario === 'Professor'">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="openScheduling()">
+            <ion-icon name="calendar-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Agendar Sala</ion-card-title>
+            <ion-card-content>Reservar ambiente</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="cancelBooking()">
+            <ion-icon name="close-circle-outline" class="card-icon danger"></ion-icon>
+            <ion-card-title>Cancelar</ion-card-title>
+            <ion-card-content>Cancelar agendamento</ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ng-container>
+
+
+  <!-- COORDENADOR -->
+  <ng-container *ngIf="tipoUsuario === 'Coordenador'">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="openScheduling()">
+            <ion-icon name="calendar-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Agendar Eventos</ion-card-title>
+            <ion-card-content>Gerenciar reservas da escola</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="viewReports()">
+            <ion-icon name="bar-chart-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Relatórios</ion-card-title>
+            <ion-card-content>Visualizar estatísticas</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="openConsultaGeral()">
+            <ion-icon name="search-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Consulta Geral</ion-card-title>
+            <ion-card-content>Ver todas as reservas</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="openGestaoProfessores()">
+            <ion-icon name="people-circle-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Gestão de Professores</ion-card-title>
+            <ion-card-content>Visualização e busca</ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ng-container>
+
+
+  <!-- DIRETOR -->
+  <ng-container *ngIf="tipoUsuario === 'Diretor'">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="viewReports()">
+            <ion-icon name="bar-chart-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Relatórios</ion-card-title>
+            <ion-card-content>Visualizar estatísticas</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="manageUsers()">
+            <ion-icon name="people-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Usuários</ion-card-title>
+            <ion-card-content>Gerenciar acesso</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="openConsultaGeral()">
+            <ion-icon name="search-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Consulta Geral</ion-card-title>
+            <ion-card-content>Ver todas as reservas</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="openDetalhesAgendamentos()">
+            <ion-icon name="document-text-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Visualização Detalhada</ion-card-title>
+            <ion-card-content>Solicitante, sala, data e horário</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="openGerenciarSalas()">
+            <ion-icon name="build-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Gerenciar Salas</ion-card-title>
+            <ion-card-content>Tipos e capacidades</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="openGerenciarDisponibilidade()">
+            <ion-icon name="calendar-clear-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Gerenciar Disponibilidade</ion-card-title>
+            <ion-card-content>Cadastrar e alterar horários</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="openScheduling()">
+            <ion-icon name="calendar-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Agendar Sala</ion-card-title>
+            <ion-card-content>Reservar ambiente</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <!-- Perfis -->
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="openPerfis()">
+            <ion-icon name="people-circle-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Perfis</ion-card-title>
+            <ion-card-content>Criar e gerenciar perfis</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <!-- Permissões -->
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="openPermissoes()">
+            <ion-icon name="key-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Permissões</ion-card-title>
+            <ion-card-content>Criar e gerenciar permissões</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <!-- Recursos -->
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="openRecursos()">
+            <ion-icon name="cube-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Recursos</ion-card-title>
+            <ion-card-content>Gerenciar recursos da escola</ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ng-container>
+
+
+  <!-- CHEFE DE TI -->
+  <ng-container *ngIf="tipoUsuario === 'Chefe de TI'">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="openGerenciarSalas()">
+            <ion-icon name="build-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Gerenciar Salas</ion-card-title>
+            <ion-card-content>Criar e Editar</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="manageUsers()">
+            <ion-icon name="key-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Gerenciar Usuários</ion-card-title>
+            <ion-card-content>Permissões e perfis</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="viewLogs()">
+            <ion-icon name="folder-open-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Ver Logs</ion-card-title>
+            <ion-card-content>Ações do sistema</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="generateReports()">
+            <ion-icon name="bar-chart-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Relatórios Técnicos</ion-card-title>
+            <ion-card-content>Gerar relatórios detalhados</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="openGerenciarDisponibilidade()">
+            <ion-icon name="calendar-clear-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Gerenciar Disponibilidade</ion-card-title>
+            <ion-card-content>Cadastrar e alterar horários</ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ng-container>
+
+
+  <!-- FUNCIONÁRIO ADMINISTRATIVO -->
+  <ng-container *ngIf="tipoUsuario === 'Funcionário Administrativo'">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="openConsultaGeral()">
+            <ion-icon name="calendar-clear-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Consulta Agendamentos</ion-card-title>
+            <ion-card-content>Consultar reservas</ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card class="dashboard-card" (click)="openScheduling()">
+            <ion-icon name="calendar-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Agendar Sala</ion-card-title>
+            <ion-card-content>Reservar ambiente</ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ng-container>
+</ion-content>

@@ -1,0 +1,42 @@
+ion-header {
+  --background: var(--ion-color-primary);
+  color: #fff;
+}
+
+.nivel-header {
+  --background: var(--ion-color-light);
+  border-radius: 10px;
+  margin: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.nivel-titulo {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.accordion-body {
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  margin: 0 8px 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+ion-item {
+  --background: #ffffff;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+ion-checkbox {
+  --border-color: var(--ion-color-medium);
+  --checkmark-color: var(--ion-color-primary);
+  --background: var(--ion-color-light-shade);
+}
+
+.botao-salvar {
+  margin-top: 20px;
+  font-weight: bold;
+  font-size: 1rem;
+}

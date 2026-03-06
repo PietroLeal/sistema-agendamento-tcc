@@ -1,0 +1,136 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary" class="header-toolbar">
+    <ion-title>Minhas Reservas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="checkNotifications()" fill="clear">
+        <ion-icon slot="icon-only" name="notifications-outline" class="notification-icon"></ion-icon>
+        <ion-badge color="danger" *ngIf="notificationsCount > 0" class="notification-badge">{{notificationsCount}}</ion-badge>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding" color="light">
+  <!-- Seção de cabeçalho -->
+  <div class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">Minhas Reservas</h1>
+      <p class="hero-subtitle">Gerencie suas reservas de ambientes</p>
+      <ion-button shape="round" (click)="novaReserva()" class="new-reservation-btn">
+        <ion-icon name="add" slot="start"></ion-icon>
+        Nova Reserva
+      </ion-button>
+    </div>
+    <div class="hero-decoration">
+      <div class="decoration-circle"></div>
+      <div class="decoration-wave"></div>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters-section">
+    <ion-segment [(ngModel)]="filter" class="custom-segment">
+      <ion-segment-button value="all">
+        <ion-label>Todas</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="confirmed">
+        <ion-label>Confirmadas</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="cancelled">
+        <ion-label>Canceladas</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <!-- Lista de reservas -->
+  <div class="reservations-container">
+    <div *ngFor="let reserva of filteredReservas" class="reservation-card" 
+         [class.cancelled]="reserva.status === 'Cancelada'"
+         [@cardAnimation]>
+      <div class="card-header">
+        <div class="room-icon-container">
+          <ion-icon [name]="getIcone(reserva.sala)" class="room-icon"></ion-icon>
+        </div>
+        <div class="room-info">
+          <h2 class="room-name">{{ reserva.sala }}</h2>
+          <div class="room-meta">
+            <span class="meta-item">
+              <ion-icon name="calendar-outline"></ion-icon>
+              {{ reserva.data | date:'dd/MM/yyyy' }}
+            </span>
+            <span class="meta-item">
+              <ion-icon name="time-outline"></ion-icon>
+              {{ reserva.horario }}
+            </span>
+          </div>
+        </div>
+        <ion-badge [color]="reserva.status === 'Confirmada' ? 'success' : 'danger'" class="status-badge">
+          {{ reserva.status }}
+        </ion-badge>
+      </div>
+
+      <div *ngIf="reserva.status === 'Confirmada'" class="card-actions">
+        <ion-button fill="clear" color="primary" (click)="editarReserva(reserva)" class="action-btn">
+          <ion-icon name="create-outline" slot="start"></ion-icon>
+          Editar
+        </ion-button>
+        <ion-button fill="clear" color="danger" (click)="confirmarCancelamento(reserva)" class="action-btn">
+          <ion-icon name="trash-outline" slot="start"></ion-icon>
+          Cancelar
+        </ion-button>
+      </div>
+    </div>
+
+    <div *ngIf="filteredReservas.length === 0" class="empty-state">
+      <ion-icon name="calendar-outline" class="empty-icon"></ion-icon>
+      <h3>Nenhuma reserva encontrada</h3>
+      <p>Você ainda não possui reservas {{filter === 'all' ? '' : filter === 'confirmed' ? 'confirmadas' : 'canceladas'}}</p>
+      <ion-button fill="outline" (click)="novaReserva()" *ngIf="filter !== 'cancelled'">
+        Fazer nova reserva
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Modal de edição -->
+  <ion-modal [isOpen]="reservaEditando !== null" (didDismiss)="cancelarEdicao()" class="edit-modal">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="primary" class="modal-toolbar">
+          <ion-title>Editar Reserva</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cancelarEdicao()">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form [formGroup]="form" (ngSubmit)="salvarAlteracao()" class="edit-form">
+          <ion-item lines="full" class="form-item">
+            <ion-label position="floating">Sala</ion-label>
+            <ion-input formControlName="sala" type="text"></ion-input>
+          </ion-item>
+
+          <ion-item lines="full" class="form-item">
+            <ion-label position="floating">Data</ion-label>
+            <ion-input formControlName="data" type="date"></ion-input>
+          </ion-item>
+
+          <ion-item lines="full" class="form-item">
+            <ion-label position="floating">Horário</ion-label>
+            <ion-input formControlName="horario" type="text" placeholder="Ex: 14:00 - 16:00"></ion-input>
+          </ion-item>
+
+          <div class="form-actions">
+            <ion-button type="submit" expand="block" color="primary" [disabled]="form.invalid" class="submit-btn">
+              Salvar Alterações
+            </ion-button>
+            <ion-button expand="block" fill="outline" color="medium" (click)="cancelarEdicao()" class="cancel-btn">
+              Cancelar
+            </ion-button>
+          </div>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

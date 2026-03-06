@@ -1,0 +1,85 @@
+ion-content {
+  --background: #f8f9ff;
+}
+
+.welcome-section {
+  text-align: center;
+  margin: 2rem 0 1.5rem;
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--ion-color-primary);
+  }
+
+  p {
+    color: #666;
+    font-size: 1rem;
+  }
+}
+
+.dashboard-grid {
+  margin-bottom: 2rem;
+}
+
+.dashboard-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 82, 212, 0.1);
+  transition: transform 0.3s ease;
+  height: 100%;
+  padding: 1rem;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 82, 212, 0.15);
+  }
+
+  ion-card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--ion-color-primary);
+  }
+
+  ion-card-subtitle {
+    font-size: 0.9rem;
+    color: #999;
+    margin-bottom: 0.5rem;
+  }
+
+  ion-card-content {
+    font-size: 1rem;
+    color: #444;
+
+    p {
+      margin: 0.25rem 0;
+
+      &.ativo {
+        color: var(--ion-color-success);
+        font-weight: 600;
+      }
+
+      &.inativo {
+        color: var(--ion-color-danger);
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+ion-item.action-buttons {
+  --background: transparent;
+  justify-content: flex-end;
+
+  ion-button {
+    margin-left: 0.5rem;
+  }
+}
+
+ion-text.ion-text-center {
+  display: block;
+  margin-top: 2rem;
+  font-size: 1rem;
+}

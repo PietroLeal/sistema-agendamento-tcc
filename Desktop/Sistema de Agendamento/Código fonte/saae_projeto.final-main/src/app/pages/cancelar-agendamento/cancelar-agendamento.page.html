@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Cancelar Agendamento</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" color="light">
+  <h2 class="titulo">Meus Agendamentos</h2>
+
+  <ion-list *ngIf="agendamentos.length > 0; else nenhum">
+    <ion-item *ngFor="let agendamento of agendamentos">
+      <ion-label>
+        <h3>{{ agendamento.evento || 'Agendamento' }}</h3>
+        <p>{{ agendamento.sala }} — {{ agendamento.data }} das {{ agendamento.horaInicio }} às {{ agendamento.horaFim }}</p>
+      </ion-label>
+
+      <ion-button
+        *ngIf="agendamento.status !== 'CANCELADO'"
+        color="danger"
+        fill="outline"
+        slot="end"
+        (click)="cancelarAgendamento(agendamento.id)">
+        Cancelar
+      </ion-button>
+
+      <ion-badge *ngIf="agendamento.status === 'CANCELADO'" color="medium" slot="end">
+        Cancelado
+      </ion-badge>
+    </ion-item>
+  </ion-list>
+
+  <ng-template #nenhum>
+    <ion-text color="medium">
+      <p class="sem-agendamentos">Nenhum agendamento encontrado.</p>
+    </ion-text>
+  </ng-template>
+
+  <ion-button expand="block" color="primary" class="ion-margin-top" (click)="voltarDashboard()">
+    Voltar ao Dashboard
+  </ion-button>
+</ion-content>

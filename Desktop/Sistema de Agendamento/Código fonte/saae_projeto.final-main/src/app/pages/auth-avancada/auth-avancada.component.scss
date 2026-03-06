@@ -1,0 +1,27 @@
+ion-header, ion-toolbar, ion-content {
+  --background: #4361ee;
+  color: white;
+}
+
+ion-content {
+  --background: #f8f9ff;
+  color: #212529;
+}
+
+ion-item {
+  margin-bottom: 15px;
+}
+
+ion-button {
+  margin-top: 15px;
+}
+
+h2 {
+  margin-bottom: 10px;
+  color: #4361ee;
+}
+
+ion-text p {
+  font-weight: 600;
+  margin-bottom: 20px;
+}

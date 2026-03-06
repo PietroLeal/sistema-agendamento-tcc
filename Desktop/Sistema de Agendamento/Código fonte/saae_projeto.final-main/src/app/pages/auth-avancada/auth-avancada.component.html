@@ -1,0 +1,59 @@
+<ion-header translucent>
+  <ion-toolbar color="primary">
+    <ion-title>Autenticação Avançada</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" fullscreen>
+
+  <!-- LOGIN -->
+  <form *ngIf="modo === 'login'" [formGroup]="loginForm" (ngSubmit)="login()">
+    <ion-item>
+      <ion-label position="floating">E-mail</ion-label>
+      <ion-input type="email" formControlName="email" autocomplete="email"></ion-input>
+    </ion-item>
+    <ion-note color="danger" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">E-mail inválido</ion-note>
+
+    <ion-item>
+      <ion-label position="floating">Senha</ion-label>
+      <ion-input type="password" formControlName="senha" autocomplete="current-password"></ion-input>
+    </ion-item>
+    <ion-note color="danger" *ngIf="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched">Senha deve ter ao menos 6 caracteres</ion-note>
+
+    <ion-button expand="block" type="submit" [disabled]="loginForm.invalid">Entrar</ion-button>
+
+    <ion-button fill="clear" expand="block" (click)="iniciarRecuperacao()">Esqueci a senha</ion-button>
+  </form>
+
+  <!-- RECUPERAR SENHA - E-MAIL -->
+  <form *ngIf="modo === 'recuperar'" [formGroup]="recuperarForm" (ngSubmit)="enviarEmailRecuperacao()">
+    <ion-item>
+      <ion-label position="floating">Digite seu e-mail</ion-label>
+      <ion-input type="email" formControlName="email"></ion-input>
+    </ion-item>
+    <ion-note color="danger" *ngIf="recuperarForm.get('email')?.invalid && recuperarForm.get('email')?.touched">E-mail inválido</ion-note>
+
+    <ion-button expand="block" type="submit" [disabled]="recuperarForm.invalid">Enviar e-mail de recuperação</ion-button>
+
+    <ion-button fill="clear" expand="block" (click)="voltarLogin()">Voltar ao login</ion-button>
+  </form>
+
+  <!-- PERGUNTA SECRETA -->
+  <form *ngIf="modo === 'perguntaSecreta'" [formGroup]="perguntaForm" (ngSubmit)="verificarResposta()">
+    <ion-text>
+      <h2>Pergunta secreta</h2>
+      <p>{{ usuarioEncontrado?.perguntaSecreta }}</p>
+    </ion-text>
+
+    <ion-item>
+      <ion-label position="floating">Sua resposta</ion-label>
+      <ion-input type="text" formControlName="resposta"></ion-input>
+    </ion-item>
+    <ion-note color="danger" *ngIf="perguntaForm.get('resposta')?.invalid && perguntaForm.get('resposta')?.touched">Resposta obrigatória</ion-note>
+
+    <ion-button expand="block" type="submit" [disabled]="perguntaForm.invalid">Confirmar resposta</ion-button>
+
+    <ion-button fill="clear" expand="block" (click)="voltarLogin()">Voltar ao login</ion-button>
+  </form>
+
+</ion-content>

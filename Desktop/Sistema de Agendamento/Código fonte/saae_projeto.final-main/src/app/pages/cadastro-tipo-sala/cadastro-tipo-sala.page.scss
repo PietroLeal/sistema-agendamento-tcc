@@ -1,0 +1,121 @@
+@import "~@ionic/angular/css/core.css";
+
+.login-bg {
+  --background: linear-gradient(135deg, #0052d4, #4364f7, #6fb1fc);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 1rem;
+}
+
+.login-wrapper {
+  background: #fff;
+  width: 100%;
+  max-width: 400px;
+  padding: 2.5rem 2rem;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.8s forwards;
+  margin: auto;
+
+  &.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+h2 {
+  font-weight: 700;
+  font-size: 2.5rem;
+  color: #0052d4;
+  margin-bottom: 0.5rem;
+}
+
+p {
+  margin-bottom: 2rem;
+  color: #666;
+  font-size: 1rem;
+}
+
+.input-item {
+  margin-bottom: 1.5rem;
+  --background: #eef3ff;
+  border-radius: 50px;
+  padding-left: 0.75rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 0 transparent;
+  display: flex;
+  align-items: center;
+
+  ion-icon {
+    font-size: 1.6rem;
+    color: #0052d4;
+    background-color: #d0e2ff;
+    border-radius: 50%;
+    padding: 0.4rem;
+    margin-right: 0.5rem;
+  }
+
+  ion-input {
+    --padding-start: 0;
+    font-size: 1.1rem;
+    color: #333;
+    width: 100%;
+    font-weight: 500;
+  }
+
+  &:focus-within {
+    --background: #e0edff;
+    box-shadow: 0 0 0 3px rgba(0, 82, 212, 0.2);
+  }
+}
+
+.btn-login {
+  --background: #0052d4;
+  --background-activated: #003a9f;
+  --background-focused: #003a9f;
+  --box-shadow: 0 5px 15px rgba(0, 82, 212, 0.5);
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #fff;
+  height: 50px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  margin-top: 1rem;
+
+  &:hover {
+    --background: #003a9f;
+    --box-shadow: 0 8px 20px rgba(0, 58, 159, 0.7);
+  }
+
+  .btn-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  ion-icon {
+    font-size: 1.4rem;
+    color: #fff;
+  }
+
+  ion-spinner {
+    --color: #fff;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

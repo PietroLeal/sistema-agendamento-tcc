@@ -1,0 +1,67 @@
+<ion-header translucent>
+  <ion-toolbar color="primary">
+    <ion-title>Agendar Ambiente</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="checkNotifications()">
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" color="light">
+  <div class="intro-section">
+    <h1>Selecione um Ambiente</h1>
+    <p>Escolha o local que deseja agendar ou adicione um novo</p>
+  </div>
+
+  <ion-grid class="room-grid">
+    <ion-row>
+      <ion-col size="6" *ngFor="let ambiente of ambientes">
+        <ion-card class="room-card" (click)="selecionarAmbiente(ambiente)">
+          <ion-icon [name]="ambiente.icone" class="room-icon"></ion-icon>
+          <ion-card-title>{{ ambiente.nome }}</ion-card-title>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-button expand="block" color="primary" (click)="abrirModal()">
+    <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+    Adicionar Ambiente
+  </ion-button>
+
+  <!-- Modal de Cadastro -->
+  <ion-modal [isOpen]="modalAberto" (didDismiss)="fecharModal()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="primary">
+          <ion-title>Cadastrar Ambiente</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="fecharModal()">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+        <form (ngSubmit)="adicionarAmbiente()">
+          <ion-item>
+            <ion-label position="floating">Nome do Ambiente</ion-label>
+            <ion-input [(ngModel)]="novoAmbiente.nome" name="nome" required></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="floating">Ícone</ion-label>
+            <ion-input [(ngModel)]="novoAmbiente.icone" name="icone" required></ion-input>
+          </ion-item>
+
+          <ion-button expand="block" type="submit" color="primary" class="ion-margin-top">
+            Salvar Ambiente
+          </ion-button>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

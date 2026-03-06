@@ -1,0 +1,79 @@
+ion-content {
+  --background: #f8f9ff;
+}
+
+.intro-section {
+  text-align: center;
+  margin: 2rem 0 1.5rem;
+  h1 { font-size: 1.8rem; font-weight: 700; color: var(--ion-color-primary); }
+  p { color: #666; font-size: 1rem; }
+}
+
+.date-card {
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 82, 212, 0.1);
+  background: #fff;
+}
+
+.modern-calendar {
+  border-radius: 12px;
+  padding: 1rem;
+  background: #f1f4ff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  --ion-background-color: transparent;
+}
+
+.horarios-grid { margin-top: 1rem; }
+
+ion-card.selected {
+  border: 2px solid var(--ion-color-primary);
+  background: rgba(0,82,212,0.1);
+}
+
+.time-icon {
+  font-size: 2rem;
+  color: var(--ion-color-primary);
+}
+/* cadastro-reserva-data.page.scss */
+.selected {
+  border: 2px solid var(--ion-color-primary);
+  transform: scale(1.03);
+  transition: transform 0.2s;
+}
+
+.bloqueado {
+  opacity: 0.5;
+  pointer-events: none;
+  background-color: #f8d7da;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.texto-indisponivel {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.modern-calendar {
+  width: 100%;
+}
+
+.time-icon {
+  font-size: 20px;
+  margin-right: 8px;
+}
+
+.intro-section h1 {
+  margin-bottom: 4px;
+  font-size: 20px;
+}
+
+.intro-section p {
+  margin-top: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.horarios-grid ion-card {
+  cursor: pointer;
+}

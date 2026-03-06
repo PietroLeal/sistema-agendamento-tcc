@@ -1,0 +1,30 @@
+<ion-content fullscreen class="login-bg">
+  <div class="login-wrapper notificacoes-wrapper" [class.show]="true">
+
+    <!-- Botão de voltar para o dashboard -->
+    <ion-button fill="clear" color="primary" routerLink="/dashboard" class="btn-voltar">
+      <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+    </ion-button>
+
+    <div class="titulo-notificacoes">
+      <ion-icon name="notifications-outline" class="icone-notificacao"></ion-icon>
+      <h2>Notificações</h2>
+    </div>
+    <p>Veja os alertas, lembretes e avisos do sistema</p>
+
+    <ion-list *ngIf="notificacoesFiltradas.length > 0; else semNotificacoes">
+      <ion-item *ngFor="let n of notificacoesFiltradas" lines="none" class="notificacao-card">
+        <ion-icon name="alert-circle-outline" slot="start"></ion-icon>
+        <ion-label>
+          <h3>{{ n.titulo }}</h3>
+          <p>{{ n.mensagem }}</p>
+          <p><strong>Data:</strong> {{ n.data }} | <strong>Tipo:</strong> {{ n.tipo }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ng-template #semNotificacoes>
+      <ion-text color="medium">Nenhuma notificação encontrada.</ion-text>
+    </ng-template>
+  </div>
+</ion-content>

@@ -1,0 +1,66 @@
+<ion-header translucent>
+  <ion-toolbar color="primary">
+    <ion-title>Visualização Detalhada</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <div class="reserva-grid">
+    <ion-card *ngFor="let reserva of reservas" class="reserva-card">
+      <ion-card-header>
+        <ion-card-title>{{ reserva.evento }}</ion-card-title>
+        <ion-card-subtitle>{{ reserva.sala }} | {{ reserva.data }}</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-item lines="none">
+          <ion-label>
+            <h3>Data:</h3>
+            <p>{{ reserva.data }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label>
+            <h3>Horário:</h3>
+            <p>{{ reserva.horaInicio }} - {{ reserva.horaFim }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label>
+            <h3>Segmento:</h3>
+            <p>{{ reserva.segmento }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label>
+            <h3>Qtd. Pessoas:</h3>
+            <p>{{ reserva.qtdPessoas }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label>
+            <h3>Funcionário Responsável:</h3>
+            <p>{{ reserva.funcionario }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label>
+            <h3>Recursos Solicitados:</h3>
+            <p>{{ getRecursosFormatados(reserva.recursos) }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <ion-button expand="block" fill="outline" color="medium" (click)="voltar()">
+    Voltar
+  </ion-button>
+
+</ion-content>

@@ -1,0 +1,28 @@
+<ion-content fullscreen class="login-bg">
+  <div class="login-wrapper" [class.show]="true">
+    <h2>Recuperar Senha</h2>
+    <p>Informe seu e-mail cadastrado para redefinir a senha</p>
+
+    <form (ngSubmit)="enviarEmail()">
+      <ion-item lines="none" class="input-item">
+        <ion-icon name="mail-outline" slot="start"></ion-icon>
+        <ion-input
+          type="email"
+          placeholder="Seu e-mail"
+          [(ngModel)]="email"
+          name="email"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <ion-button expand="block" color="primary" type="submit">
+        <ion-icon slot="start" name="send-outline"></ion-icon>
+        Enviar link de recuperação
+      </ion-button>
+    </form>
+
+    <ion-text color="medium">
+      <p style="margin-top: 1rem;">Você receberá um link para redefinir sua senha.</p>
+    </ion-text>
+  </div>
+</ion-content>

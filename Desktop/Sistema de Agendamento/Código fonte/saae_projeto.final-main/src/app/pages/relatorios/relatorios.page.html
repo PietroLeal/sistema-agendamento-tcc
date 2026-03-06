@@ -1,0 +1,97 @@
+<ion-content fullscreen class="login-bg">
+  <div class="login-wrapper show">
+
+    <h2>Relatórios</h2>
+    <p>Visualize e exporte as informações do sistema</p>
+
+    <!-- 🔹 Filtros -->
+    <div class="filtros-container">
+
+      <ion-item lines="none" class="input-item">
+        <ion-icon name="stats-chart-outline" slot="start"></ion-icon>
+        <ion-select placeholder="Tipo de Relatório" [(ngModel)]="tipoRelatorio">
+          <ion-select-option value="geral">Relatórios Gerenciais</ion-select-option>
+          <ion-select-option value="disponibilidade">Ambientes e Disponibilidade</ion-select-option>
+          <ion-select-option value="recursos">Agendamentos e Recursos</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <!-- 🔹 Filtro de Data (agora para TODAS as consultas) -->
+      <ion-item lines="none" class="input-item">
+        <ion-icon name="calendar-outline" slot="start"></ion-icon>
+        <ion-datetime display-format="DD/MM/YYYY" placeholder="Data de Início" [(ngModel)]="dataInicio"></ion-datetime>
+      </ion-item>
+
+      <ion-item lines="none" class="input-item">
+        <ion-icon name="calendar-outline" slot="start"></ion-icon>
+        <ion-datetime display-format="DD/MM/YYYY" placeholder="Data de Fim" [(ngModel)]="dataFim"></ion-datetime>
+      </ion-item>
+
+      <!-- 🔹 Filtro de sala (somente se aplicável) -->
+      <ion-item lines="none" class="input-item" *ngIf="tipoRelatorio === 'geral'">
+        <ion-icon name="business-outline" slot="start"></ion-icon>
+        <ion-select placeholder="Filtrar por Sala" [(ngModel)]="salaSelecionada">
+          <ion-select-option value="">Todas</ion-select-option>
+          <ion-select-option *ngFor="let sala of salas" [value]="sala">{{ sala }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </div>
+
+    <!-- 🔹 Botões -->
+    <ion-button expand="block" color="primary" (click)="gerarRelatorio()">
+      <ion-icon slot="start" name="search-outline"></ion-icon>
+      Gerar Relatório
+    </ion-button>
+
+    <ion-button expand="block" color="success" (click)="exportarExcel()">
+      <ion-icon slot="start" name="download-outline"></ion-icon>
+      Exportar Excel
+    </ion-button>
+
+    <ion-button expand="block" color="danger" (click)="exportarPDF()">
+      <ion-icon slot="start" name="document-outline"></ion-icon>
+      Exportar PDF
+    </ion-button>
+
+    <!-- 🔹 Resultados -->
+    <div *ngIf="agendamentosFiltrados.length > 0; else vazio">
+      <ion-card *ngFor="let item of agendamentosFiltrados" class="relatorio-card">
+
+        <!-- Relatórios Gerenciais -->
+        <ion-card-header *ngIf="tipoRelatorio === 'geral'">
+          <ion-card-title>{{ item.evento }} - {{ item.segmento }}</ion-card-title>
+          <ion-card-subtitle>{{ item.data }} | {{ item.horaInicio }} às {{ item.horaFim }} | {{ item.sala }}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content *ngIf="tipoRelatorio === 'geral'">
+          <p><strong>Qtd. Pessoas:</strong> {{ item.qtdPessoas }}</p>
+          <p><strong>Funcionário:</strong> {{ item.funcionario }}</p>
+          <p><strong>Recursos:</strong> {{ item.recursos.join(', ') }}</p>
+        </ion-card-content>
+
+        <!-- Ambientes e Disponibilidade -->
+        <ion-card-content *ngIf="tipoRelatorio === 'disponibilidade'">
+          <p><strong>Data:</strong> {{ item.data }}</p>
+          <p><strong>Sala:</strong> {{ item.sala }}</p>
+          <p><strong>Taxa de Ocupação:</strong> {{ item.ocupacao }}</p>
+          <p><strong>Horários Usados:</strong> {{ item.usados }}/{{ item.total }}</p>
+        </ion-card-content>
+
+        <!-- Agendamentos e Recursos -->
+        <ion-card-content *ngIf="tipoRelatorio === 'recursos'">
+          <p><strong>Data:</strong> {{ item.data }}</p>
+          <p><strong>Recurso:</strong> {{ item.recurso }}</p>
+          <p><strong>Ambiente:</strong> {{ item.ambiente }}</p>
+          <p><strong>Vezes Utilizado:</strong> {{ item.vezes }}</p>
+        </ion-card-content>
+
+      </ion-card>
+    </div>
+
+    <!-- Caso não tenha dados -->
+    <ng-template #vazio>
+      <ion-text color="medium">
+        <p style="margin-top: 2rem;">Nenhum dado para exibir. Ajuste os filtros acima.</p>
+      </ion-text>
+    </ng-template>
+  </div>
+</ion-content>

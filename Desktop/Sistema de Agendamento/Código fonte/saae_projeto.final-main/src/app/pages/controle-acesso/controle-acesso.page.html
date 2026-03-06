@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Controle de Acesso</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-accordion-group expand="inset" class="accordion-container">
+    <ion-accordion *ngFor="let nivel of niveis">
+      <ion-item slot="header" class="nivel-header">
+        <ion-label class="nivel-label">{{ nivel }}</ion-label>
+      </ion-item>
+
+      <div slot="content" class="accordion-content">
+        <form [formGroup]="formularioPermissoes[nivel]">
+          <ion-list lines="full">
+            <ion-item *ngFor="let permissao of permissoes" class="permissao-item">
+              <ion-label>{{ permissao.descricao }}</ion-label>
+              <ion-checkbox
+                slot="end"
+                [formControlName]="permissao.nome"
+                color="primary">
+              </ion-checkbox>
+            </ion-item>
+          </ion-list>
+        </form>
+      </div>
+    </ion-accordion>
+  </ion-accordion-group>
+
+  <ion-button expand="block" color="success" (click)="salvarPermissoes()" class="btn-salvar">
+    <ion-icon name="save-outline" slot="start"></ion-icon>
+    Salvar Permissões
+  </ion-button>
+</ion-content>

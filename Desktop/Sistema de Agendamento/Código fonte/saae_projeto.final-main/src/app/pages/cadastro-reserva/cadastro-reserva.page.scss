@@ -1,0 +1,52 @@
+ion-content {
+  --background: #f8f9ff;
+}
+
+.intro-section {
+  text-align: center;
+  margin: 2rem 0 1.5rem;
+
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--ion-color-primary);
+  }
+
+  p {
+    color: #666;
+    font-size: 1rem;
+  }
+}
+
+.room-grid {
+  margin-top: 1rem;
+}
+
+.room-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 82, 212, 0.1);
+  transition: transform 0.3s ease;
+  height: 100%;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 82, 212, 0.15);
+  }
+
+  .room-icon {
+    font-size: 2.5rem;
+    color: var(--ion-color-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  ion-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+  }
+}

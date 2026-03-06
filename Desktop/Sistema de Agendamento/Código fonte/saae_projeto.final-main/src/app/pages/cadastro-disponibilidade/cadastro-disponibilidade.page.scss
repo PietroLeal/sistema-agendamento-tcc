@@ -1,0 +1,51 @@
+ion-content {
+  --background: #f8f9ff; // Azul suave, mais acolhedor
+}
+
+.intro-section {
+  text-align: center;
+  margin: 2rem 0 1.5rem;
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--ion-color-primary);
+  }
+
+  p {
+    color: #666;
+    font-size: 1rem;
+  }
+}
+
+.date-card {
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 82, 212, 0.1);
+  background: #fff;
+}
+
+.modern-calendar {
+  border-radius: 12px;
+  padding: 1rem;
+  background: #f1f4ff; // Azul claro
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --ion-background-color: transparent;
+
+  ion-datetime-button {
+    display: none; // Esconde botões padrões se quiser
+  }
+}
+
+.horarios-grid {
+  margin-top: 1rem;
+}
+
+ion-card.selected {
+  border: 2px solid var(--ion-color-primary);
+  background: rgba(0, 82, 212, 0.1);
+}
+
+.time-icon {
+  font-size: 2rem;
+  color: var(--ion-color-primary);
+}
