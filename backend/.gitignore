@@ -1,10 +1,8 @@
 # Dependências
 node_modules/
-package-lock.json
 yarn.lock
 
 # Ambiente
-.env
 .env.local
 .env.production
 .env.development
