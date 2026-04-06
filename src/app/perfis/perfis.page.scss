@@ -23,7 +23,22 @@
   flex-direction: column;
   gap: 1.5rem;
 }
+// Adicione ao final do arquivo
 
+.forgot-password-link {
+  text-align: center;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.forgot-btn {
+  --color: #0052d4;
+  --color-activated: #003a9f;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+}
 .perfil-card {
   background: white;
   border-radius: 20px;

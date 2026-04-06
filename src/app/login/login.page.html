@@ -1,13 +1,13 @@
 <ion-content class="login-bg">
   <div class="login-container">
     <div class="login-wrapper" [class.show]="!loading">
-<div class="brand-section">
-  <div class="brand-icon">
-    <ion-icon name="calendar-outline"></ion-icon>
-  </div>
-  <h2>Sistema de Gestão Escolar</h2>
-  <p>Organize salas, agendamentos e recursos em um só lugar</p>
-</div>
+      <div class="brand-section">
+        <div class="brand-icon">
+          <ion-icon name="calendar-outline"></ion-icon>
+        </div>
+        <h2>Sistema de Gestão Escolar</h2>
+        <p>Organize salas, agendamentos e recursos em um só lugar</p>
+      </div>
 
       <form [formGroup]="loginForm" (ngSubmit)="login()">
         <ion-item lines="none" class="input-item">
@@ -35,6 +35,12 @@
             (click)="togglePasswordVisibility()">
           </ion-icon>
         </ion-item>
+
+        <div class="forgot-password-link">
+          <ion-button fill="clear" (click)="goToForgotPassword()" class="forgot-btn">
+            Esqueci minha senha?
+          </ion-button>
+        </div>
 
         <ion-button
           type="submit"

@@ -1,15 +1,8 @@
 -- ============================================
--- SCRIPT COMPLETO PARA CRIAÇÃO DO BANCO DE DADOS
--- Nome do Banco: saae
 -- Sistema: Reserva de Salas
+-- Criação das Tabelas
 -- ============================================
 
--- 1. CRIAR O BANCO DE DADOS
-DROP DATABASE IF EXISTS saae;
-CREATE DATABASE saae CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE saae;
-
--- 2. TABELA DE FUNCIONÁRIOS (USUÁRIOS)
 CREATE TABLE funcionarios (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(100) NOT NULL,
@@ -21,7 +14,6 @@ CREATE TABLE funcionarios (
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. TABELA DE SALAS
 CREATE TABLE salas (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(100) NOT NULL,
@@ -33,7 +25,6 @@ CREATE TABLE salas (
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 4. TABELA DE DISPONIBILIDADES
 CREATE TABLE disponibilidades (
   id INT AUTO_INCREMENT PRIMARY KEY,
   salaId INT NOT NULL,
@@ -47,7 +38,6 @@ CREATE TABLE disponibilidades (
   FOREIGN KEY (salaId) REFERENCES salas(id) ON DELETE CASCADE
 );
 
--- 5. TABELA DE RESERVAS
 CREATE TABLE reservas (
   id INT AUTO_INCREMENT PRIMARY KEY,
   salaId INT NOT NULL,
@@ -63,7 +53,6 @@ CREATE TABLE reservas (
   FOREIGN KEY (usuarioId) REFERENCES funcionarios(id) ON DELETE CASCADE
 );
 
--- 6. TABELA DE LOGS
 CREATE TABLE logs (
   id INT AUTO_INCREMENT PRIMARY KEY,
   acao VARCHAR(100) NOT NULL,
@@ -75,7 +64,6 @@ CREATE TABLE logs (
   FOREIGN KEY (usuarioId) REFERENCES funcionarios(id) ON DELETE CASCADE
 );
 
--- 7. TABELA DE PERMISSÕES
 CREATE TABLE permissoes (
   perfil VARCHAR(50) PRIMARY KEY,
   verDashboard BOOLEAN DEFAULT FALSE,
@@ -94,7 +82,6 @@ CREATE TABLE permissoes (
   manutencaoSistema BOOLEAN DEFAULT FALSE
 );
 
--- 8. TABELA DE RECURSOS
 CREATE TABLE recursos (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(100) NOT NULL,
@@ -102,7 +89,6 @@ CREATE TABLE recursos (
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 9. TABELA DE PERFIS
 CREATE TABLE perfis (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(50) NOT NULL UNIQUE,
@@ -111,10 +97,9 @@ CREATE TABLE perfis (
 );
 
 -- ============================================
--- 10. INSERIR DADOS INICIAIS
+-- 10. INSERTS
 -- ============================================
 
--- Inserir permissões padrão
 INSERT INTO permissoes (perfil, verDashboard, agendarSala, cancelarAgendamento, verSalas, gerenciarSalas, gerenciarDisponibilidade, verUsuarios, gerenciarUsuarios, verRelatorios, gerarRelatorios, verLogs, gerenciarRecursos, gerenciarPerfis, manutencaoSistema) VALUES 
 ('Professor', 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 ('Funcionário Administrativo', 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0),
@@ -122,7 +107,6 @@ INSERT INTO permissoes (perfil, verDashboard, agendarSala, cancelarAgendamento, 
 ('Diretor', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0),
 ('Chefe de TI', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 
--- Inserir perfis padrão
 INSERT INTO perfis (nome, descricao) VALUES 
 ('Professor', 'Usuário comum que pode agendar salas'),
 ('Funcionário Administrativo', 'Usuário com permissões administrativas básicas'),
@@ -130,7 +114,6 @@ INSERT INTO perfis (nome, descricao) VALUES
 ('Diretor', 'Usuário com permissões de direção'),
 ('Chefe de TI', 'Usuário com todas as permissões do sistema');
 
--- Inserir recursos padrão
 INSERT INTO recursos (nome, descricao) VALUES
 ('Projetor', 'Projetor multimídia com HDMI e VGA'),
 ('Quadro Branco', 'Quadro branco com marcadores'),
@@ -141,7 +124,6 @@ INSERT INTO recursos (nome, descricao) VALUES
 ('Caixa de Som', 'Caixa de som amplificada'),
 ('Microfone', 'Microfone sem fio');
 
--- Inserir salas de exemplo
 INSERT INTO salas (nome, tipoAmbiente, capacidade, recursos, ativa) VALUES
 ('Sala 101', 'sala', 40, '[1,2,3]', TRUE),
 ('Sala 102', 'sala', 40, '[1,2,3]', TRUE),
@@ -151,7 +133,6 @@ INSERT INTO salas (nome, tipoAmbiente, capacidade, recursos, ativa) VALUES
 ('Biblioteca', 'biblioteca', 50, '[4,5]', TRUE),
 ('Quadra Esportiva', 'quadra', 80, '[]', TRUE);
 
--- Inserir disponibilidades de exemplo (Sala 101 - Segunda a Sexta)
 INSERT INTO disponibilidades (salaId, nomeSala, diaSemana, diaNome, horarios, ativo) VALUES
 (1, 'Sala 101', 1, 'Segunda-feira', '[1,2,3,4,5,6,7,8,9,10,11,12]', TRUE),
 (1, 'Sala 101', 2, 'Terça-feira', '[1,2,3,4,5,6,7,8,9,10,11,12]', TRUE),

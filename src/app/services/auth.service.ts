@@ -11,7 +11,7 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
   private loadingSubject = new BehaviorSubject<boolean>(true);
   loading$ = this.loadingSubject.asObservable();
-  private checkAuthPromise: Promise<void> | null = null; // Evita múltiplas chamadas
+  private checkAuthPromise: Promise<void> | null = null;
 
   constructor(
     private api: ApiService,
@@ -21,13 +21,11 @@ export class AuthService {
   }
 
   async checkAuth() {
-    // Se já está verificando, retorna a mesma promise
     if (this.checkAuthPromise) {
       return this.checkAuthPromise;
     }
 
     this.checkAuthPromise = (async () => {
-      // Se já tem usuário, não precisa verificar de novo
       if (this.currentUserSubject.value) {
         this.loadingSubject.next(false);
         return;
@@ -39,7 +37,6 @@ export class AuthService {
           this.currentUserSubject.next(response.user);
         }
       } catch (error) {
-        // Não autenticado, mantém null
         this.currentUserSubject.next(null);
       } finally {
         this.loadingSubject.next(false);
@@ -59,6 +56,31 @@ export class AuthService {
       }
       throw new Error('Erro ao fazer login');
     } catch (error) {
+      throw error;
+    }
+  }
+
+  async requestPasswordReset(email: string): Promise<void> {
+    try {
+      await this.api.requestPasswordReset(email);
+    } catch (error: any) {
+      throw error;
+    }
+  }
+
+  async verifyResetToken(token: string): Promise<boolean> {
+    try {
+      const response = await this.api.verifyResetToken(token);
+      return response.valid;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async confirmPasswordReset(newPassword: string, token: string): Promise<void> {
+    try {
+      await this.api.confirmPasswordReset(newPassword, token);
+    } catch (error: any) {
       throw error;
     }
   }

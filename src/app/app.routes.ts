@@ -9,6 +9,14 @@ export const routes: Routes = [
     loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
   },
   {
+    path: 'forgot-password',
+    loadComponent: () => import('./forgot-password/forgot-password.page').then(m => m.ForgotPasswordPage)
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () => import('./reset-password/reset-password.page').then(m => m.ResetPasswordPage)
+  },
+  {
     path: 'login',
     loadComponent: () => import('./login/login.page').then((m) => m.LoginPage),
     canActivate: [loginGuard]
@@ -88,4 +96,5 @@ export const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full',
   },
+
 ];

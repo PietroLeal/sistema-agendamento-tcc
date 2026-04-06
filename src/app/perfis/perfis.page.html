@@ -33,10 +33,15 @@
             <span class="permissao-descricao">{{ permissao.descricao }}</span>
           </div>
           <div class="permissao-toggle">
-<ion-toggle 
-  [(ngModel)]="permissoesEditando[permissao.chave]"
-  [disabled]="editando !== true || perfilEditando !== perfil.perfil">
-</ion-toggle>
+            <ion-toggle 
+              *ngIf="!(editando && perfilEditando === perfil.perfil)"
+              [ngModel]="perfil.permissoes[permissao.chave]"
+              disabled="true">
+            </ion-toggle>
+            <ion-toggle 
+              *ngIf="editando && perfilEditando === perfil.perfil"
+              [(ngModel)]="permissoesEditando[permissao.chave]">
+            </ion-toggle>
           </div>
         </div>
       </div>

@@ -21,12 +21,39 @@ export class ApiService {
       return response.data;
     } catch (error: any) {
       if (error.response?.status === 401) {
-        // Não redireciona aqui, deixa o guard cuidar
         throw error;
       }
       throw error.response?.data || error;
     }
   }
+
+  // ========== REDEFINIÇÃO DE SENHA ==========
+  
+  async requestPasswordReset(email: string): Promise<any> {
+    try {
+      return await this.post('/auth/request-reset-password', { email });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async verifyResetToken(token: string): Promise<{ valid: boolean }> {
+    try {
+      return await this.post('/auth/verify-reset-token', { token });
+    } catch (error) {
+      return { valid: false };
+    }
+  }
+
+  async confirmPasswordReset(password: string, token: string): Promise<any> {
+    try {
+      return await this.post('/auth/confirm-reset-password', { password, token });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // ========== MÉTODOS EXISTENTES ==========
 
   get(url: string) { return this.request('GET', url); }
   post(url: string, data: any) { return this.request('POST', url, data); }

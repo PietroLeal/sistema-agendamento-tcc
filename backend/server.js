@@ -4,12 +4,100 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const fs = require('fs');
 const path = require('path');
 
 const app = express();
+
+// ============= CONFIGURAÇÃO DE E-MAIL =============
+// Configuração do transportador de e-mail
+const emailTransporter = nodemailer.createTransport({
+  service: 'gmail', // ou 'outlook', 'yahoo', etc.
+  auth: {
+    user: process.env.EMAIL_USER, // seu e-mail
+    pass: process.env.EMAIL_PASS   // sua senha ou senha de app
+  }
+});
+
+// Função para enviar e-mail
+async function sendResetPasswordEmail(email, resetLink, userName) {
+  try {
+    const mailOptions = {
+      from: `"Sistema de Gestão Escolar" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: '🔐 Redefinição de Senha - Sistema de Gestão Escolar',
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; }
+            .header { background: linear-gradient(135deg, #0052d4, #4364f7); color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { padding: 30px; }
+            .button { display: inline-block; padding: 12px 24px; background-color: #0052d4; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; border-top: 1px solid #ddd; }
+            .warning { color: #ff9800; font-size: 12px; margin-top: 10px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h2>Sistema de Gestão Escolar</h2>
+            </div>
+            <div class="content">
+              <h3>Olá, ${userName}!</h3>
+              <p>Recebemos uma solicitação para redefinir a senha da sua conta.</p>
+              <p>Clique no botão abaixo para criar uma nova senha:</p>
+              <div style="text-align: center;">
+                <a href="${resetLink}" class="button" style="color: white;">Redefinir Senha</a>
+              </div>
+              <p>Se o botão não funcionar, copie e cole o link abaixo no seu navegador:</p>
+              <p style="background-color: #f4f4f4; padding: 10px; word-break: break-all;">${resetLink}</p>
+              <p class="warning">⚠️ Este link é válido por apenas 1 hora e só pode ser usado uma vez.</p>
+              <p>Se você não solicitou essa redefinição, ignore este e-mail.</p>
+            </div>
+            <div class="footer">
+              <p>Sistema de Gestão Escolar - Organize salas, agendamentos e recursos</p>
+              <p>Este é um e-mail automático, por favor não responda.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+      text: `
+        Redefinição de Senha - Sistema de Gestão Escolar
+        
+        Olá, ${userName}!
+        
+        Recebemos uma solicitação para redefinir a senha da sua conta.
+        
+        Clique no link abaixo para criar uma nova senha:
+        ${resetLink}
+        
+        ⚠️ Este link é válido por apenas 1 hora e só pode ser usado uma vez.
+        
+        Se você não solicitou essa redefinição, ignore este e-mail.
+        
+        ---
+        Sistema de Gestão Escolar
+      `
+    };
+
+    const info = await emailTransporter.sendMail(mailOptions);
+    console.log('✅ E-mail enviado com sucesso para:', email);
+    console.log('📧 ID da mensagem:', info.messageId);
+    return true;
+  } catch (error) {
+    console.error('❌ Erro ao enviar e-mail:', error);
+    return false;
+  }
+}
 
 // Configuração do CORS
 const allowedOrigins = process.env.CORS_ORIGINS 
@@ -233,6 +321,144 @@ app.post('/api/auth/logout', async (req, res) => {
   res.json({ success: true });
 });
 
+// ============= REDEFINIÇÃO DE SENHA =============
+
+// Armazenamento temporário de tokens
+const resetTokens = new Map();
+
+// Rota: Solicitar redefinição de senha (COM ENVIO DE E-MAIL REAL)
+app.post('/api/auth/request-reset-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ error: 'E-mail é obrigatório' });
+    }
+
+    // Buscar usuário no banco
+    const [rows] = await pool.query(
+      'SELECT id, nome, email FROM funcionarios WHERE email = ?',
+      [email]
+    );
+
+    // Por segurança, sempre retorna sucesso mesmo se o e-mail não existir
+    if (rows.length === 0) {
+      console.log(`⚠️ E-mail não encontrado: ${email}`);
+      return res.json({ 
+        message: 'Se o e-mail estiver cadastrado, você receberá um link de redefinição' 
+      });
+    }
+
+    const user = rows[0];
+    
+    // Gerar token único
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = Date.now() + 3600000; // Expira em 1 hora
+    
+    // Armazenar token
+    resetTokens.set(token, {
+      email: user.email,
+      userId: user.id,
+      expiresAt
+    });
+    
+    // Link de redefinição
+    const appUrl = process.env.APP_URL || 'http://localhost:8100';
+    const resetLink = `${appUrl}/reset-password?token=${token}`;
+    
+    // TENTAR ENVIAR E-MAIL REAL
+    const emailSent = await sendResetPasswordEmail(user.email, resetLink, user.nome);
+    
+    if (emailSent) {
+      console.log(`✅ Link de redefinição enviado para: ${user.email}`);
+      console.log(`🔗 Link: ${resetLink}`);
+      res.json({ 
+        message: 'Enviamos um link de redefinição para seu e-mail. Verifique sua caixa de entrada e spam.'
+      });
+    } else {
+      // Se falhou o e-mail, mostra o link no console como fallback
+      console.log('\n========================================');
+      console.log('⚠️ FALHA NO ENVIO DE E-MAIL');
+      console.log('========================================');
+      console.log(`📧 Para: ${user.email}`);
+      console.log(`👤 Usuário: ${user.nome}`);
+      console.log(`🔗 Link para redefinir (copie e cole no navegador):`);
+      console.log(`${resetLink}`);
+      console.log('========================================\n');
+      
+      res.json({ 
+        message: 'Não foi possível enviar o e-mail. Por favor, entre em contato com o administrador do sistema.'
+      });
+    }
+    
+  } catch (error) {
+    console.error('Erro em request-reset-password:', error);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
+
+// Rota: Verificar token de redefinição
+app.post('/api/auth/verify-reset-token', (req, res) => {
+  const { token } = req.body;
+  
+  if (!token) {
+    return res.json({ valid: false });
+  }
+  
+  const tokenData = resetTokens.get(token);
+  
+  if (!tokenData || tokenData.expiresAt < Date.now()) {
+    if (tokenData) resetTokens.delete(token);
+    return res.json({ valid: false });
+  }
+  
+  res.json({ valid: true });
+});
+
+// Rota: Confirmar redefinição de senha
+app.post('/api/auth/confirm-reset-password', async (req, res) => {
+  const { password, token } = req.body;
+  
+  if (!password || !token) {
+    return res.status(400).json({ error: 'Senha e token são obrigatórios' });
+  }
+  
+  if (password.length < 6) {
+    return res.status(400).json({ error: 'A senha deve ter pelo menos 6 caracteres' });
+  }
+  
+  const tokenData = resetTokens.get(token);
+  
+  if (!tokenData || tokenData.expiresAt < Date.now()) {
+    if (tokenData) resetTokens.delete(token);
+    return res.status(400).json({ error: 'Token inválido ou expirado' });
+  }
+  
+  try {
+    // Hash da nova senha
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    
+    // Atualizar senha no banco
+    await pool.query(
+      'UPDATE funcionarios SET password = ? WHERE id = ?',
+      [hashedPassword, tokenData.userId]
+    );
+    
+    // Remover token usado
+    resetTokens.delete(token);
+    
+    console.log(`✅ Senha redefinida com sucesso para usuário ID: ${tokenData.userId}`);
+    res.json({ message: 'Senha redefinida com sucesso' });
+    
+  } catch (error) {
+    console.error('Erro ao atualizar senha:', error);
+    res.status(500).json({ error: 'Erro ao redefinir senha' });
+  }
+});
+
+// ============= FIM REDEFINIÇÃO DE SENHA =============
+
 // 🔥 MIDDLEWARE PARA VERIFICAR AUTENTICAÇÃO
 async function authMiddleware(req, res, next) {
   const token = req.cookies.token;
@@ -348,12 +574,11 @@ app.get('/api/:table/:id', async (req, res) => {
   }
 });
 
-// POST create (cadastro de funcionários é público)
+// POST create
 app.post('/api/:table', async (req, res) => {
   try {
     validateTable(req.params.table);
 
-    // Se não for funcionários, exige autenticação
     if (req.params.table !== 'funcionarios') {
       const token = req.cookies.token;
       if (!token) {
@@ -400,7 +625,6 @@ app.put('/api/:table/:id', authMiddleware, async (req, res) => {
   try {
     validateTable(req.params.table);
 
-    // 🔥 PROTEÇÃO DO ADMIN
     if (req.params.table === 'funcionarios') {
       const [rows] = await pool.query(
         'SELECT email, protegido FROM funcionarios WHERE id = ?',
@@ -453,7 +677,6 @@ app.delete('/api/:table/:id', authMiddleware, async (req, res) => {
   try {
     validateTable(req.params.table);
 
-    // 🔥 PROTEÇÃO - Não permitir deletar o admin
     if (req.params.table === 'funcionarios') {
       const [rows] = await pool.query(
         'SELECT email, protegido FROM funcionarios WHERE id = ?',
@@ -527,5 +750,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`\n🚀 Servidor rodando na porta ${PORT}`);
   console.log(`📊 Banco: ${process.env.DB_NAME}`);
+  console.log(`📧 E-mail configurado com: ${process.env.EMAIL_USER || 'não configurado'}`);
   console.log(`🔗 API: http://localhost:${PORT}/api\n`);
 });

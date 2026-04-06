@@ -5,7 +5,7 @@ import { IonicModule, NavController, AlertController } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
 import { LogService } from '../services/log.service';
 import { addIcons } from 'ionicons';
-import { mailOutline, lockClosedOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
+import { mailOutline, lockClosedOutline, eyeOutline, eyeOffOutline, calendarOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-login',
@@ -35,7 +35,8 @@ export class LoginPage {
       mailOutline,
       lockClosedOutline,
       eyeOutline,
-      eyeOffOutline
+      eyeOffOutline,
+      calendarOutline
     });
 
     this.loginForm = this.fb.group({
@@ -82,9 +83,9 @@ export class LoginPage {
       
     } catch (error: any) {
       let mensagem = 'Erro ao fazer login';
-      if (error?.error?.error === 'Usuário não encontrado') {
+      if (error?.error === 'Usuário não encontrado') {
         mensagem = 'Usuário não encontrado';
-      } else if (error?.error?.error === 'Senha incorreta') {
+      } else if (error?.error === 'Senha incorreta') {
         mensagem = 'Senha incorreta';
       }
       this.presentAlert('Erro', mensagem);
@@ -93,8 +94,8 @@ export class LoginPage {
     }
   }
 
-  cadastrar() {
-    this.navCtrl.navigateForward('/cadastrofuncionario');
+  goToForgotPassword() {
+    this.navCtrl.navigateForward('/forgot-password');
   }
 
   async presentAlert(header: string, message: string) {

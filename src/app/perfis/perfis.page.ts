@@ -44,7 +44,7 @@ export class PerfisPage implements OnInit {
     'Funcionário Administrativo',
     'Coordenador',
     'Diretor'
-  ];
+  ]; // Chefe de TI nn ta aqui pq ele é o goat
   
   permissoesDisponiveis: Permissao[] = [
     { nome: 'Ver Dashboard', chave: 'verDashboard', descricao: 'Acessar a página principal' },
@@ -251,17 +251,19 @@ export class PerfisPage implements OnInit {
     this.editando = true;
     this.perfilEditando = perfil;
     
+    // Inicializa todas as permissões como false
     const todasPermissoes: { [key: string]: boolean } = {};
     
     for (const p of this.permissoesDisponiveis) {
       todasPermissoes[p.chave] = false;
     }
     
+    // Copia as permissões existentes
     for (const [chave, valor] of Object.entries(permissoes)) {
       todasPermissoes[chave] = valor;
     }
     
-    this.permissoesEditando = todasPermissoes;
+    this.permissoesEditando = { ...todasPermissoes };
     
     console.log('Permissões copiadas (com todas as chaves):', this.permissoesEditando);
   }
