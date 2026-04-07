@@ -13,23 +13,20 @@ const path = require('path');
 
 const app = express();
 
-// ============= CONFIGURAÇÃO DE E-MAIL =============
-// Configuração do transportador de e-mail
 const emailTransporter = nodemailer.createTransport({
-  service: 'gmail', // ou 'outlook', 'yahoo', etc.
+  service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER, // seu e-mail
-    pass: process.env.EMAIL_PASS   // sua senha ou senha de app
+    user: process.env.EMAIL_USER, 
+    pass: process.env.EMAIL_PASS   
   }
 });
 
-// Função para enviar e-mail
 async function sendResetPasswordEmail(email, resetLink, userName) {
   try {
     const mailOptions = {
-      from: `"Sistema de Gestão Escolar" <${process.env.EMAIL_USER}>`,
+      from: `"Sistema de Agendamento de Ambientes Escolares" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: '🔐 Redefinição de Senha - Sistema de Gestão Escolar',
+      subject: 'Redefinição de Senha - Sistema de Agendamento de Ambientes Escolares',
       html: `
         <!DOCTYPE html>
         <html>
@@ -42,13 +39,13 @@ async function sendResetPasswordEmail(email, resetLink, userName) {
             .content { padding: 30px; }
             .button { display: inline-block; padding: 12px 24px; background-color: #0052d4; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
             .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; border-top: 1px solid #ddd; }
-            .warning { color: #ff9800; font-size: 12px; margin-top: 10px; }
+            .warning { color: #DC143C; font-size: 12px; margin-top: 10px; }
           </style>
         </head>
         <body>
           <div class="container">
             <div class="header">
-              <h2>Sistema de Gestão Escolar</h2>
+              <h2>Sistema de Agendamento de Ambientes Escolares</h2>
             </div>
             <div class="content">
               <h3>Olá, ${userName}!</h3>
@@ -59,11 +56,11 @@ async function sendResetPasswordEmail(email, resetLink, userName) {
               </div>
               <p>Se o botão não funcionar, copie e cole o link abaixo no seu navegador:</p>
               <p style="background-color: #f4f4f4; padding: 10px; word-break: break-all;">${resetLink}</p>
-              <p class="warning">⚠️ Este link é válido por apenas 1 hora e só pode ser usado uma vez.</p>
+              <p class="warning">Este link é válido por apenas 1 hora e só pode ser usado uma vez.</p>
               <p>Se você não solicitou essa redefinição, ignore este e-mail.</p>
             </div>
             <div class="footer">
-              <p>Sistema de Gestão Escolar - Organize salas, agendamentos e recursos</p>
+              <p>Sistema de Agendamento de Ambientes Escolares - Organize salas, agendamentos e recursos</p>
               <p>Este é um e-mail automático, por favor não responda.</p>
             </div>
           </div>
@@ -71,7 +68,7 @@ async function sendResetPasswordEmail(email, resetLink, userName) {
         </html>
       `,
       text: `
-        Redefinição de Senha - Sistema de Gestão Escolar
+        Redefinição de Senha - Sistema de Agendamento de Ambientes Escolares
         
         Olá, ${userName}!
         
@@ -85,7 +82,7 @@ async function sendResetPasswordEmail(email, resetLink, userName) {
         Se você não solicitou essa redefinição, ignore este e-mail.
         
         ---
-        Sistema de Gestão Escolar
+        Sistema de Agendamento de Ambientes Escolares
       `
     };
 
@@ -99,7 +96,6 @@ async function sendResetPasswordEmail(email, resetLink, userName) {
   }
 }
 
-// Configuração do CORS
 const allowedOrigins = process.env.CORS_ORIGINS 
   ? process.env.CORS_ORIGINS.split(',') 
   : ['http://localhost:4200', 'http://localhost:8100'];
@@ -111,7 +107,6 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// 🔐 TABELAS PERMITIDAS
 const allowedTables = [
   'funcionarios',
   'salas',
@@ -135,7 +130,6 @@ function formatDateToMySQL(date) {
   return d.toISOString().slice(0, 19).replace('T', ' ');
 }
 
-// 🔥 FUNÇÃO PARA CRIAR AS TABELAS USANDO O ARQUIVO schema.sql
 async function initDatabase() {
   let connection;
   try {
@@ -149,11 +143,9 @@ async function initDatabase() {
 
     console.log('⚙️ Inicializando banco de dados...');
 
-    // Criar banco se não existir
     await connection.query(`CREATE DATABASE IF NOT EXISTS ${process.env.DB_NAME}`);
     await connection.query(`USE ${process.env.DB_NAME}`);
     
-    // Ler e executar o arquivo schema.sql
     const schemaPath = path.join(__dirname, 'schema.sql');
     if (fs.existsSync(schemaPath)) {
       const sql = fs.readFileSync(schemaPath, 'utf8');
@@ -171,7 +163,6 @@ async function initDatabase() {
   }
 }
 
-// 🔥 FUNÇÃO PARA GARANTIR QUE O ADMIN EXISTE
 async function ensureAdmin() {
   let connection;
   try {
@@ -184,7 +175,6 @@ async function ensureAdmin() {
 
     await connection.query(`USE ${process.env.DB_NAME}`);
 
-    // Verificar se a tabela funcionarios existe
     const [tables] = await connection.query(
       "SHOW TABLES LIKE 'funcionarios'"
     );
@@ -227,7 +217,6 @@ async function ensureAdmin() {
   }
 }
 
-// Configuração do pool de conexões
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -249,19 +238,16 @@ async function testConnection() {
   }
 }
 
-// 🔥 INICIALIZAÇÃO (ORDEM CORRETA)
 (async () => {
   await initDatabase();      // 1. Cria as tabelas
   await ensureAdmin();       // 2. Cria o admin
   await testConnection();    // 3. Testa conexão
 })();
 
-// Rota de teste
 app.get('/api/teste', (req, res) => {
   res.json({ message: 'Servidor funcionando!' });
 });
 
-// ============= ROTAS DE AUTENTICAÇÃO =============
 app.post('/api/auth/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -311,7 +297,6 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-// 🔥 ROTA DE LOGOUT
 app.post('/api/auth/logout', async (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
@@ -321,12 +306,9 @@ app.post('/api/auth/logout', async (req, res) => {
   res.json({ success: true });
 });
 
-// ============= REDEFINIÇÃO DE SENHA =============
 
-// Armazenamento temporário de tokens
 const resetTokens = new Map();
 
-// Rota: Solicitar redefinição de senha (COM ENVIO DE E-MAIL REAL)
 app.post('/api/auth/request-reset-password', async (req, res) => {
   try {
     const { email } = req.body;
@@ -335,13 +317,11 @@ app.post('/api/auth/request-reset-password', async (req, res) => {
       return res.status(400).json({ error: 'E-mail é obrigatório' });
     }
 
-    // Buscar usuário no banco
     const [rows] = await pool.query(
       'SELECT id, nome, email FROM funcionarios WHERE email = ?',
       [email]
     );
 
-    // Por segurança, sempre retorna sucesso mesmo se o e-mail não existir
     if (rows.length === 0) {
       console.log(`⚠️ E-mail não encontrado: ${email}`);
       return res.json({ 
@@ -351,22 +331,18 @@ app.post('/api/auth/request-reset-password', async (req, res) => {
 
     const user = rows[0];
     
-    // Gerar token único
     const token = crypto.randomBytes(32).toString('hex');
     const expiresAt = Date.now() + 3600000; // Expira em 1 hora
     
-    // Armazenar token
     resetTokens.set(token, {
       email: user.email,
       userId: user.id,
       expiresAt
     });
     
-    // Link de redefinição
     const appUrl = process.env.APP_URL || 'http://localhost:8100';
     const resetLink = `${appUrl}/reset-password?token=${token}`;
     
-    // TENTAR ENVIAR E-MAIL REAL
     const emailSent = await sendResetPasswordEmail(user.email, resetLink, user.nome);
     
     if (emailSent) {
@@ -376,7 +352,6 @@ app.post('/api/auth/request-reset-password', async (req, res) => {
         message: 'Enviamos um link de redefinição para seu e-mail. Verifique sua caixa de entrada e spam.'
       });
     } else {
-      // Se falhou o e-mail, mostra o link no console como fallback
       console.log('\n========================================');
       console.log('⚠️ FALHA NO ENVIO DE E-MAIL');
       console.log('========================================');
@@ -397,7 +372,6 @@ app.post('/api/auth/request-reset-password', async (req, res) => {
   }
 });
 
-// Rota: Verificar token de redefinição
 app.post('/api/auth/verify-reset-token', (req, res) => {
   const { token } = req.body;
   
@@ -415,7 +389,6 @@ app.post('/api/auth/verify-reset-token', (req, res) => {
   res.json({ valid: true });
 });
 
-// Rota: Confirmar redefinição de senha
 app.post('/api/auth/confirm-reset-password', async (req, res) => {
   const { password, token } = req.body;
   
@@ -435,17 +408,14 @@ app.post('/api/auth/confirm-reset-password', async (req, res) => {
   }
   
   try {
-    // Hash da nova senha
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     
-    // Atualizar senha no banco
     await pool.query(
       'UPDATE funcionarios SET password = ? WHERE id = ?',
       [hashedPassword, tokenData.userId]
     );
     
-    // Remover token usado
     resetTokens.delete(token);
     
     console.log(`✅ Senha redefinida com sucesso para usuário ID: ${tokenData.userId}`);
@@ -457,9 +427,7 @@ app.post('/api/auth/confirm-reset-password', async (req, res) => {
   }
 });
 
-// ============= FIM REDEFINIÇÃO DE SENHA =============
 
-// 🔥 MIDDLEWARE PARA VERIFICAR AUTENTICAÇÃO
 async function authMiddleware(req, res, next) {
   const token = req.cookies.token;
 
@@ -477,7 +445,6 @@ async function authMiddleware(req, res, next) {
   }
 }
 
-// 🔥 ROTA PARA VERIFICAR SE ESTÁ LOGADO
 app.get('/api/auth/me', authMiddleware, async (req, res) => {
   try {
     const [rows] = await pool.query(
@@ -495,9 +462,6 @@ app.get('/api/auth/me', authMiddleware, async (req, res) => {
   }
 });
 
-// ============= CRUD GENÉRICO =============
-
-// GET all
 app.get('/api/:table', async (req, res) => {
   try {
     validateTable(req.params.table);
@@ -508,7 +472,6 @@ app.get('/api/:table', async (req, res) => {
   }
 });
 
-// GET with query params
 app.get('/api/:table/query', async (req, res) => {
   try {
     validateTable(req.params.table);
@@ -551,7 +514,6 @@ app.get('/api/:table/query', async (req, res) => {
   }
 });
 
-// GET by id
 app.get('/api/:table/:id', async (req, res) => {
   try {
     validateTable(req.params.table);
@@ -574,7 +536,6 @@ app.get('/api/:table/:id', async (req, res) => {
   }
 });
 
-// POST create
 app.post('/api/:table', async (req, res) => {
   try {
     validateTable(req.params.table);
@@ -620,7 +581,6 @@ app.post('/api/:table', async (req, res) => {
   }
 });
 
-// PUT update
 app.put('/api/:table/:id', authMiddleware, async (req, res) => {
   try {
     validateTable(req.params.table);
@@ -672,7 +632,6 @@ app.put('/api/:table/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// DELETE
 app.delete('/api/:table/:id', authMiddleware, async (req, res) => {
   try {
     validateTable(req.params.table);
@@ -706,7 +665,6 @@ app.delete('/api/:table/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// Rota para disponibilidade para todos os dias
 app.post('/api/disponibilidades/todos-dias', authMiddleware, async (req, res) => {
   const { salaId, nomeSala, horarios, ativo } = req.body;
   
@@ -745,7 +703,7 @@ app.post('/api/disponibilidades/todos-dias', authMiddleware, async (req, res) =>
   }
 });
 
-// Iniciar servidor
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`\n🚀 Servidor rodando na porta ${PORT}`);
